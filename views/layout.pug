@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    title=`${title} - Epic Books`
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    header(class='header')
+      h1(class='title') Epic Books
+
+    aside(class='sidebar')
+      ul(class='navigation')
+        li: a(href='/') Home
+      h1(class='navigation-header') Browse
+      ul(class='navigation')
+        li: a(href='/books') All books
+        li: a(href='/authors') All authors
+        li: a(href='/genres') All genres
+        li: a(href='/copies') All copies
+      h1(class='navigation-header') Contribute
+      ul(class='navigation')
+        li: a(href='/book/create') Add a book
+        li: a(href='/author/create') Add an author
+        li: a(href='/genre/create') Add a genre
+        li: a(href='/copy/create') Add a copy
+
+    main(class='content')
+      block content

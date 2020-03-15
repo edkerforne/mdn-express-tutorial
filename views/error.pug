@@ -1,0 +1,5 @@
+extends layout
+
+block content
+  h1(class='heading') #{message} #{error.status}
+  pre(class='stack-trace') #{error.stack}
