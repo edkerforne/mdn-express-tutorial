@@ -1,2 +1,5 @@
 # Ignore modules
 node_modules
+
+# Ignore swap files
+*.swp

@@ -1,0 +1,99 @@
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('/fonts/RobotoSlab-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-VariableFont_slnt,wght.ttf');
+}
+
+/* Colors */
+:root {
+  --color-primary: #00a5cf;
+  --color-background: #e0e5d5;
+  --color-background-alt: #ffffff;
+  --color-text: #04080f;
+  --color-text-alt: #59656f;
+}
+
+/*
+ * General styling
+ */
+body {
+  background: var(--color-background);
+  box-sizing: border-box;
+  color: var(--color-text);
+  font-family: 'Inter';
+  margin: 1rem;
+  padding: 0;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/*
+ * Header
+ */
+.header {
+  font-family: 'Roboto Slab';
+  margin: auto;
+  max-width: 960px;
+  width: 100%
+}
+
+/*
+ * Sidebar & content wrapper
+ */
+.page {
+  margin: auto;
+  max-width: 960px;
+  width: 100%
+}
+
+@media only screen and (min-width: 720px) {
+  .page {
+    display: grid;
+    gap: 0.875rem;
+    grid-template-columns: 1fr 3fr;
+  }
+}
+
+/*
+ * Sidebar
+ */
+.sidebar {
+  font-size: 0.875rem;
+}
+
+.navigation-header {
+  font-family: 'Roboto Slab';
+  font-size: 1rem;
+  margin: 0;
+}
+
+.navigation {
+  list-style: none;
+  margin: 0.25rem 0 0.5rem 0;
+  padding: 0 0 0 1rem;
+}
+
+/*
+ * Content
+ */
+.content {
+  align-self: baseline;
+  background: var(--color-background-alt);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.heading {
+  font-family: 'Roboto Slab';
+}
