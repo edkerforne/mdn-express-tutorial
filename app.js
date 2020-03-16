@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 /*
  * Handle errors
  */
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   // Only provide errors in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

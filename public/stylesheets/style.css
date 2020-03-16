@@ -8,6 +8,11 @@
   src: url('/fonts/Inter-VariableFont_slnt,wght.ttf');
 }
 
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('/fonts/RobotoMono-Regular.ttf');
+}
+
 /* Colors */
 :root {
   --color-primary: #00a5cf;
@@ -91,9 +96,17 @@ a:hover {
   align-self: baseline;
   background: var(--color-background-alt);
   border-radius: 0.5rem;
+  overflow-x: scroll;
   padding: 0.5rem 1rem;
 }
 
 .heading {
   font-family: 'Roboto Slab';
+}
+
+/*
+ * Error page
+ */
+.stack-trace {
+  font: 0.875rem normal 'Roboto Mono';
 }
