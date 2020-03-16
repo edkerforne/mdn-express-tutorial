@@ -9,7 +9,10 @@ const logger = require('morgan');
  * Set up routes
  */
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const authorRouter = require('./routes/author');
+const bookRouter = require('./routes/book');
+const bookinstanceRouter = require('./routes/bookinstance');
+const genreRouter = require('./routes/genre');
 
 /*
  * Set up Mongoose connection
@@ -42,7 +45,10 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Handle routes
  */
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/authors', authorRouter);
+app.use('/books', bookRouter);
+app.use('/copies', bookinstanceRouter);
+app.use('/genres', genreRouter);
 
 /*
  * Catch 404 and forward to error handler
