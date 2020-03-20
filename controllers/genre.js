@@ -1,8 +1,13 @@
-const genre = require('../models/genre');
+const Genre = require('../models/genre');
 
 // Display list of all genres
-exports.list = (req, res) => {
-  res.send('TODO: Genre list');
+exports.list = (req, res, next) => {
+  Genre.find()
+    .sort([['name', 'ascending']])
+    .exec((err, data) => {
+      if (err) return next(err);
+      res.render('genreList', { title: 'List of genres', list: data });
+  });
 };
 
 // Display page of a specific genre

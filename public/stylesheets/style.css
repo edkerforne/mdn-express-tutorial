@@ -20,6 +20,9 @@
   --color-background-alt: #ffffff;
   --color-text: #04080f;
   --color-text-alt: #59656f;
+  --color-available: #24b537;
+  --color-loaned: #ea8b07;
+  --color-maintenance: #d81125;
 }
 
 /*
@@ -30,6 +33,7 @@ body {
   box-sizing: border-box;
   color: var(--color-text);
   font-family: 'Inter';
+  line-height: 1.25;
   margin: 1rem;
   padding: 0;
 }
@@ -110,6 +114,26 @@ a:hover {
 .count {
   font-size: 1.75rem;
   margin-right: 0.5rem;
+}
+
+/* Book availability indicator */
+.status {
+  border-radius: 1rem;
+  color: var(--color-background-alt);
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin: 0.25rem;
+  padding: 2px 8px;
+}
+
+.available { background: var(--color-available); }
+.loaned { background: var(--color-loaned); }
+.maintenance { background: var(--color-maintenance); }
+
+/* Smaller accompanying text */
+.text-muted {
+  color: var(--color-text-alt);
+  font-size: 0.75rem;
 }
 
 /*

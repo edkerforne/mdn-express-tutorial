@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const moment = require('moment');
 
 const authorSchema = new Schema({
   name: {
@@ -23,14 +24,20 @@ authorSchema.virtual('fullname').get(function() {
   return `${this.name.first} ${this.name.last}`;
 });
 
-// Virtual for author's lifespan
+// Virtual for author's formatted dates of birth and death
 authorSchema.virtual('lifespan').get(function() {
-  return (this.dateOfDeath.getYear() - this.dateOfBirth.getYear());
+  const birth = this.dateOfBirth
+    ? moment(this.dateOfBirth).format('MMMM Do, YYYY')
+    : '';
+  const death = this.dateOfDeath
+    ? moment(this.dateOfDeath).format('MMMM Do, YYYY')
+    : '';
+  return (birth || death) ? `${birth}–${death}` : '';
 });
 
 // Virtual for author's URL
 authorSchema.virtual('url').get(function() {
-  return `/author/${this._id}`;
+  return `/authors/${this._id}`;
 });
 
 // Export model

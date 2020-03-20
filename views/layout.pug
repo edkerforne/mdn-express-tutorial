@@ -6,25 +6,25 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    header(class='header')
-      h1(class='heading') Epic Books
+    header.header
+      h1.heading Epic Books
 
-    div(class='page')
-      aside(class='sidebar')
-        ul(class='unstyled-list')
+    div.page
+      aside.sidebar
+        ul.unstyled-list
           li: a(href='/') Home
-        h1(class='navigation-header') Browse
-        ul(class='unstyled-list')
+        h1.navigation-header Browse
+        ul.unstyled-list
           li: a(href='/books') All books
           li: a(href='/authors') All authors
           li: a(href='/genres') All genres
           li: a(href='/copies') All copies
-        h1(class='navigation-header') Contribute
-        ul(class='unstyled-list')
+        h1.navigation-header Contribute
+        ul.unstyled-list
           li: a(href='/books/create') Add a book
           li: a(href='/authors/create') Add an author
           li: a(href='/genres/create') Add a genre
           li: a(href='/copies/create') Add a copy
 
-      main(class='content')
+      main.content
         block content

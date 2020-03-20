@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1.heading List of book copies
+
+  ul
+    each copy in list
+      li #[em: a(href=copy.url) #{copy.book.title}] (#{copy.imprint})
+        case copy.status
+          when 'Available'
+            span.status.available #{copy.status}
+          when 'Loaned'
+            span.status.loaned #{copy.status}
+          default
+            span.status.maintenance #{copy.status}
+        if copy.status !== 'Available'
+          br
+          span.text-muted Due: #{copy.dueFormatted}
+
+    else
+      p There are no book copies...

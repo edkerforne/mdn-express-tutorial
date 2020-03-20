@@ -1,24 +1,24 @@
 extends layout
 
 block content
-  h1(class='heading') #{title}
+  h1.heading= title
   p Welcome to #[strong: em Epic Books], a basic website made for the #[a(href='https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs') Mozilla Developer Network Node/Express tutorial].
 
-  h1(class='heading') Statistics
+  h1.heading Statistics
 
   if error
     p An error occurred while fetching dynamic content.
   else
     p The library has the following record counts:
 
-    ul(class='unstyled-list')
+    ul.unstyled-list
       li
-        a(class='statistic', href='/books') #[span(class='count') !{data.bookCount}] books
+        a(href='/books').statistic #[span.count !{data.bookCount}] books
       li
-        a(class='statistic', href='/copies') #[span(class='count') !{data.bookInstanceCount}] copies
+        a(href='/copies').statistic #[span.count !{data.bookInstanceCount}] copies
       li
-        a(class='statistic', href='/copies') #[span(class='count') !{data.availableBookInstanceCount}] available copies
+        a(href='/copies').statistic #[span.count !{data.availableBookInstanceCount}] available copies
       li
-        a(class='statistic', href='/authors') #[span(class='count') !{data.authorCount}] authors
+        a(href='/authors').statistic #[span.count !{data.authorCount}] authors
       li
-        a(class='statistic', href='/genres') #[span(class='count') !{data.genreCount}] genres
+        a(href='/genres').statistic #[span.count !{data.genreCount}] genres

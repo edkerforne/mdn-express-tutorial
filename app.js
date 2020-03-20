@@ -11,7 +11,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const authorRouter = require('./routes/author');
 const bookRouter = require('./routes/book');
-const bookinstanceRouter = require('./routes/bookinstance');
+const bookInstanceRouter = require('./routes/bookInstance');
 const genreRouter = require('./routes/genre');
 
 /*
@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/authors', authorRouter);
 app.use('/books', bookRouter);
-app.use('/copies', bookinstanceRouter);
+app.use('/copies', bookInstanceRouter);
 app.use('/genres', genreRouter);
 
 /*
