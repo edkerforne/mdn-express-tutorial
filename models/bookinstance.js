@@ -21,7 +21,7 @@ const bookinstanceSchema = new Schema({
 });
 
 // Virtual for book instance's URL
-bookinstanceSchema.virtual('url').get(() => {
+bookinstanceSchema.virtual('url').get(function() {
   return `/copy/${this._id}`;
 });
 

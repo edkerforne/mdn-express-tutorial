@@ -15,6 +15,10 @@ const bookSchema = new Schema({
     type: String,
     required: true
   },
+  isbn: {
+    type: String,
+    required: true
+  },
   genre: [{
     type: Schema.Types.ObjectId,
     ref: 'Genre'
@@ -22,8 +26,8 @@ const bookSchema = new Schema({
 });
 
 // Virtual for book's URL
-bookSchema.virtual('url').get(() => {
-  return `/book/${this._id}`;
+bookSchema.virtual('url').get(function() {
+  return `/books/${this._id}`;
 });
 
 // Export model

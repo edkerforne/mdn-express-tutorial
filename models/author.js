@@ -19,17 +19,17 @@ const authorSchema = new Schema({
 });
 
 // Virtual for author's full name
-authorSchema.virtual('fullname').get(() => {
+authorSchema.virtual('fullname').get(function() {
   return `${this.name.first} ${this.name.last}`;
 });
 
 // Virtual for author's lifespan
-authorSchema.virtual('lifespan').get(() => {
+authorSchema.virtual('lifespan').get(function() {
   return (this.dateOfDeath.getYear() - this.dateOfBirth.getYear());
 });
 
 // Virtual for author's URL
-authorSchema.virtual('url').get(() => {
+authorSchema.virtual('url').get(function() {
   return `/author/${this._id}`;
 });
 
