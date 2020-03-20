@@ -1,8 +1,13 @@
 const Book = require('../models/book');
 
 // Display list of all books
-exports.list = (req, res) => {
-  res.send('TODO: Book list');
+exports.list = (req, res, next) => {
+  Book.find({}, 'title author')
+    .populate('author')
+    .exec((err, data) => {
+      if (err) return next(err);
+      res.render('bookList', { title: 'List of books', list: data });
+    });
 };
 
 // Display page of a specific book

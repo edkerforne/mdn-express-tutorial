@@ -1,13 +1,41 @@
-const author = require('../models/author');
+const Author = require('../models/author');
+const Book = require('../models/book');
+const async = require('async');
 
 // Display list of all authors
-exports.list = (req, res) => {
-  res.send('TODO: Author list');
+exports.list = (req, res, next) => {
+  Author.find()
+    .populate('author')
+    .sort([['name.first', 'ascending']])
+    .exec((err, data) => {
+      if (err) return next(err);
+      res.render('authorList', { title: 'List of authors', list: data });
+    });
 };
 
 // Display page of a specific author
-exports.page = (req, res) => {
-  res.send('TODO: Author page');
+exports.page = (req, res, next) => {
+  async.parallel({
+    author: callback => {
+      Author.findById(req.params.id).exec(callback)
+    },
+    books: callback => {
+      Book.find({ 'author': req.params.id }, 'title summary')
+        .exec(callback)
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data.author) {
+      const err = new Error('Author not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('authorPage', {
+      title: data.author.name,
+      author: data.author,
+      books: data.books
+    });
+  });
 };
 
 // Display author create form on GET

@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1.heading= title
+
+  ul
+    each author in list
+      li #[a(href=author.url)= author.fullname]
+        if author.lifespan
+          span.text-muted &nbsp;(#{author.lifespan})
+    else
+      p There are no authors...

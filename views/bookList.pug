@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1.heading= title
+
+  ul
+    - list.sort((a, b) => { const textA = a.title.toUpperCase(); const textB = b.title.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+    each book in list
+      li #[em: a(href=book.url) #{book.title}]
+        span.text-muted  by #[a(href=book.author.url) #{book.author.fullname}]
+
+    else
+      p There are no books...
