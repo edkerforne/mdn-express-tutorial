@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1.heading Genre: #{genre.name}
+
+  dl
+    each book in books
+      dt: em: a(href=book.url)= book.title
+      dd= book.summary
+
+    else
+      p No books match this genre.

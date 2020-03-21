@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1.heading= author.fullname
+  p.text-muted= author.lifespan
+
+  h2.heading.subheading Books by this author
+  dl
+    each book in books
+      dt: em: a(href=book.url)= book.title
+      dd= book.summary
+    else
+      p This author has no books.
