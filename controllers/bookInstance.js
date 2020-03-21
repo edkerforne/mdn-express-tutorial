@@ -1,7 +1,7 @@
 const BookInstance = require('../models/bookInstance');
 
 // Display list of all book instances
-exports.list = (req, res) => {
+exports.list = (req, res, next) => {
   BookInstance.find()
     .populate('book')
     .exec((err, data) => {
@@ -11,8 +11,21 @@ exports.list = (req, res) => {
 };
 
 // Display page of a specific book instance
-exports.page = (req, res) => {
-  res.send('TODO: Book instance page');
+exports.page = (req, res, next) => {
+  BookInstance.findById(req.params.id)
+    .populate('book')
+    .exec((err, data) => {
+      if (err) return next(err);
+      if (!data) {
+        const err = new Error('Book copy not found');
+        err.status = 404;
+        return next(err);
+      }
+      res.render('bookInstancePage', {
+        title: `Copy: ${data.book.title}`,
+        bookInstance: data
+      });
+    });
 };
 
 // Display book instance create form on GET

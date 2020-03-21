@@ -25,13 +25,13 @@ exports.page = (req, res, next) => {
     }
   }, (err, data) => {
     if (err) return next(err);
-    if (!data.author) {
+    if (!data) {
       const err = new Error('Author not found');
       err.status = 404;
       return next(err);
     }
     res.render('authorPage', {
-      title: data.author.name,
+      title: data.author.fullname,
       author: data.author,
       books: data.books
     });

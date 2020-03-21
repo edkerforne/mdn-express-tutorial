@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1.heading Copy ##{bookInstance._id}
+
+  p #[span.text-muted Title:]&nbsp;
+    em: a(href=bookInstance.book.url)= bookInstance.book.title
+  p #[span.text-muted Imprint:] #{bookInstance.imprint}
+
+  p #[span.text-muted Status:]
+    case bookInstance.status
+      when 'Available'
+        span.status.available #{bookInstance.status}
+      when 'Loaned'
+        span.status.loaned #{bookInstance.status}
+      default
+        span.status.maintenance #{bookInstance.status}
+  if bookInstance.status !== 'Available'
+    p #[span.text-muted Due:] #{bookInstance.dueFormatted}

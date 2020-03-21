@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  h1.heading: em= book.title
+
+  p.text-muted by #[a(href=book.author.url) #{book.author.fullname}]
+  p= book.summary
+  p #[span.text-muted ISBN:] #{book.isbn}
+  if book.genre._id
+    p #[span.text-muted Genre:] 
+      each genre, index in book.genre
+        a(href=genre.url)= genre.name
+        if index < book.genre.length - 1
+          |, 
+
+  h2.heading.subheading Copies
+
+  ul
+    each copy in bookInstances
+      li #[a(href=copy.url) #{copy._id}]
+        case copy.status
+          when 'Available'
+            span.status.available #{copy.status}
+          when 'Loaned'
+            span.status.loaned #{copy.status}
+          default
+            span.status.maintenance #{copy.status}
+        if copy.status !== 'Available'
+          span.text-muted Due: #{copy.dueFormatted}
+
+    else
+      p There are no copies of this book.

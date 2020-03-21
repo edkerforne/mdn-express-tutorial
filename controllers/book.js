@@ -1,4 +1,6 @@
 const Book = require('../models/book');
+const BookInstance = require('../models/bookInstance.js');
+const async = require('async');
 
 // Display list of all books
 exports.list = (req, res, next) => {
@@ -11,8 +13,27 @@ exports.list = (req, res, next) => {
 };
 
 // Display page of a specific book
-exports.page = (req, res) => {
-  res.send('TODO: Book page');
+exports.page = (req, res, next) => {
+  async.parallel({
+    book: callback => {
+      Book.findById(req.params.id)
+        .populate('author')
+        .populate('genre')
+        .exec(callback);
+    },
+    bookInstances: callback => {
+      BookInstance.find({ 'book': req.params.id })
+        .exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data) {
+      const err = new Error('Book not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('bookPage', { title: data.book.title, book: data.book, bookInstances: data.bookInstances });
+  });
 };
 
 // Display book create form on GET
