@@ -83,7 +83,7 @@ dd {
   .page {
     display: grid;
     gap: 0.875rem;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr minmax(0, 3fr);
   }
 }
 
@@ -106,7 +106,6 @@ dd {
   align-self: baseline;
   background: var(--color-background-alt);
   border-radius: 0.5rem;
-  overflow-x: scroll;
   padding: 0.5rem 1.5rem 1.5rem;
 }
 
@@ -151,8 +150,56 @@ dd {
 }
 
 /*
+ * Forms
+ */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  margin: 1rem 0 0 0;
+  font-size: 0.875rem;
+}
+
+.form-field {
+  border: 1px solid #bebebe;
+  border-radius: 2rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.button {
+  background: var(--color-primary);
+  border: 0;
+  border-radius: 2rem;
+  color: var(--color-background-alt);
+  font-weight: bold;
+  margin-top: 1rem;
+  padding: 0.5rem 2rem;
+}
+
+.error-message {
+  align-self: baseline;
+  color: var(--color-maintenance);
+  background: #ffc0c0;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  margin: 0.5rem 0 0 0;
+  padding: 0.25rem 1rem;
+}
+
+.error {
+  border: 1px solid var(--color-maintenance);
+}
+
+/*
  * Error page
  */
 .stack-trace {
+  background: var(--color-background);
+  border-radius: 0.25rem;
   font: normal 0.875rem 'Roboto Mono';
+  overflow-y: scroll;
+  padding: 1rem;
 }

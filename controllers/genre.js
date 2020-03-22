@@ -1,8 +1,11 @@
 const Genre = require('../models/genre');
 const Book = require('../models/book')
 const async = require('async');
+const { body, validationResult } = require('express-validator');
 
-// Display list of all genres
+/*
+ * Display list of all genres
+ */
 exports.list = (req, res, next) => {
   Genre.find()
     .sort([['name', 'ascending']])
@@ -12,7 +15,9 @@ exports.list = (req, res, next) => {
   });
 };
 
-// Display page of a specific genre
+/*
+ * Display page of a specific genre
+ */
 exports.page = (req, res, next) => {
   async.parallel({
     genre: callback => {
@@ -32,32 +37,93 @@ exports.page = (req, res, next) => {
   });
 };
 
-// Display genre create form on GET
+/*
+ * Display genre create form on GET
+ */
 exports.createGet = (req, res) => {
-  res.send('TODO: Genre create GET');
-};
+  res.render('genreForm', { title: 'Add a genre' });
+}
 
-// Handle genre create on POST
-exports.createPost = (req, res) => {
-  res.send('TODO: Genre create POST');
-};
+/*
+ * Handle genre create on POST
+ */
+exports.createPost = [
+  
+  // Validate that the name has between 3 and 100 characters
+  body('name')
+    .isLength({ min: 3 }).trim().withMessage('Must be at least 3 characters long')
+    .isLength({ max: 100 }).withMessage('Must be shorter than 100 characters'),
+  
+  // Sanitize the name field
+  body('name').escape(),
 
-// Display genre delete form on GET
+  // Process request after validation and sanitization
+  (req, res, next) => {
+    
+    // Extract validation errors from the request
+    const errors = validationResult(req);
+
+    // Create a genre object with sanitized data
+    const genre = new Genre({ name: req.body.name });
+
+    if (!errors.isEmpty()) {
+      
+      // There are errors, so render the form again with
+      // sanitized values & error messages
+      res.render('genreForm', {
+        title: 'Add a genre',
+        genre: genre,
+        errors: errors.array()
+      });
+    } else {
+      
+      // Form data is valid, check if genre with
+      // same name already exists
+      Genre.findOne({ 'name': req.body.name })
+        .exec((err, data) => {
+          if (err) return next(err);
+          if (data) {
+            
+            // Genre exists, redirect to its page
+            res.redirect(data.url);
+          } else {
+
+            genre.save(err => {
+              if (err) return next(err);
+              
+              // Genre saved, redirect to its page
+              res.redirect(genre.url);
+            });
+          }
+        });
+    }
+  }
+];
+
+/*
+ * Display genre delete form on GET
+ */
 exports.deleteGet = (req, res) => {
   res.send('TODO: Genre delete GET');
 };
 
-// Handle genre delete on POST
+/*
+ * Handle genre delete on POST
+ */
 exports.deletePost = (req, res) => {
   res.send('TODO: Genre delete POST');
 };
 
-// Display genre update form on GET
+/*
+ * Display genre update form on GET
+ */
 exports.updateGet = (req, res) => {
   res.send('TODO: Genre update GET');
 };
 
-// Handle genre update on POST
+/*
+ * Handle genre update on POST
+ */
 exports.updatePost = (req, res) => {
   res.send('TODO: Genre update POST');
 };

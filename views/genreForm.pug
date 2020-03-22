@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1.heading= title
+
+  form(method='POST' action='').form
+    label(for='name').form-label Genre name:
+    input(
+      type='text'
+      placeholder='Fantasy, Poetry, etc.'
+      name='name'
+      value=(genre === undefined ? '' : genre.name)
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'name'
+          blockquote.error-message= error.msg
+    button(type='submit').button Submit
