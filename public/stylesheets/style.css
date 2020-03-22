@@ -164,9 +164,13 @@ dd {
 
 .form-field {
   border: 1px solid #bebebe;
-  border-radius: 2rem;
+  border-radius: 0.5rem;
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
+}
+
+textarea {
+  resize: vertical;
 }
 
 .button {

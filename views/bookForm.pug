@@ -1,0 +1,82 @@
+extends layout
+
+block content
+  h1.heading= title
+
+  form(method='POST' action='').form
+    label(for='title').form-label Title:
+    input(
+      type='text'
+      placeholder='Title'
+      name='title'
+      value=(book === undefined ? '' : book.title)
+      required='true'
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'title'
+          blockquote.error-message= error.msg
+
+    label(for='author').form-label Author:
+    select(
+      type='select'
+      placeholder='Select an author'
+      name='author'
+      required='true'
+    ).form-field
+      - authors.sort((a, b) => { const textA = a.fullname.toLowerCase(); const textB = b.fullname.toLowerCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+      for author in authors
+        if book
+          option(
+            value=author._id
+            selected=(author._id.toString() === book.author ? 'selected' : false)
+          )= author.name
+        else
+          option(
+            value=author._id
+            selected=false
+          )= author.fullname
+    if errors
+      for error in errors
+        if error.param === 'author'
+          blockquote.error-message= error.msg
+
+    label(for='summary').form-label Summary:
+    textarea(
+      type='textarea'
+      placeholder='Summary'
+      name='summary'
+      rows='3'
+      required='true'
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'summary'
+          blockquote.error-message= error.msg
+
+    label(for='isbn').form-label ISBN:
+    input(
+      type='text'
+      placeholder='ISBN13'
+      name='isbn'
+      value=(book === undefined ? '' : book.isbn)
+      required=true
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'isbn'
+          blockquote.error-message= error.msg
+
+    label.form-label Genre:
+    .form-group
+      for genre in genres
+        input(
+          type='checkbox'
+          name='genre'
+          id=genre._id
+          value=genre._id
+          checked=genre.checked
+        )
+        label(for=genre._id)= genre.name
+
+    button(type='submit').button Submit
