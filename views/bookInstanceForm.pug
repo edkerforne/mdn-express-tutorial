@@ -1,0 +1,66 @@
+extends layout
+
+block content
+  h1.heading= title
+
+  form(method='POST' action='').form
+    label(for='book').form-label Book:
+    select(
+      type='select'
+      placeholder='Select a book'
+      name='book'
+      required='true'
+    ).form-field
+      - list.sort((a, b) => { const textA = a.title.toLowerCase(); const textB = b.title.toLowerCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0; });
+      for book in list
+        if bookInstance
+          option(
+            value=book._id
+            selected=(bookInstance.book.toString() === book._id ? 'selected' : false)
+          )= book.title
+        else
+          option(value=book._id)= book.title
+    if errors
+      for error in errors
+        if error.param === 'book'
+          blockquote.error-message= error.msg
+
+    label(for='imprint').form-label Imprint:
+    input(
+      type='text'
+      placeholder='Publisher and date information'
+      name='imprint'
+      required='true'
+      value=(bookInstance === undefined ? '' : bookInstance.imprint)
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'imprint'
+          blockquote.error-message= error.msg
+
+    label(for='due').form-label Due back:
+    input(
+      type='date'
+      placeholder='dd/mm/yyyy'
+      name='due'
+      required='true'
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'due'
+          blockquote.error-message= error.msg
+
+    label(for='status').form-label Status:
+    select(
+      type='select'
+      placeholder='Select book status'
+      name='status'
+      required='true'
+    ).form-field
+      option(value='Maintenance') Maintenance
+      option(value='Available') Available
+      option(value='Loaned') Loaned
+      option(value='Reserved') Reserved
+
+    button(type='submit').button Submit
+

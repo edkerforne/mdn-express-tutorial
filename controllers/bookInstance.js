@@ -1,6 +1,10 @@
 const BookInstance = require('../models/bookInstance');
+const Book = require('../models/book');
+const { body, validationResult } = require('express-validator');
 
-// Display list of all book instances
+/*
+ * Display list of all book instances
+ */
 exports.list = (req, res, next) => {
   BookInstance.find()
     .populate('book')
@@ -10,7 +14,9 @@ exports.list = (req, res, next) => {
     });
 };
 
-// Display page of a specific book instance
+/*
+ * Display page of a specific book instance
+ */
 exports.page = (req, res, next) => {
   BookInstance.findById(req.params.id)
     .populate('book')
@@ -28,32 +34,96 @@ exports.page = (req, res, next) => {
     });
 };
 
-// Display book instance create form on GET
-exports.createGet = (req, res) => {
-  res.send('TODO: Book instance create GET');
+/*
+ * Display book instance create form on GET
+ */
+exports.createGet = (req, res, next) => {
+  Book.find({}, 'title').exec((err, data) => {
+    if (err) return next(err);
+    res.render('bookInstanceForm', { title: 'Add a book copy', list: data });
+  });
 };
 
-// Handle book instance create on POST
-exports.createPost = (req, res) => {
-  res.send('TODO: Book instance create POST');
-};
+/*
+ * Handle book instance create on POST
+ */
+exports.createPost = [
+  // Validate fields
+  body('book', 'This field is required').trim().isLength({ min: 1 }),
+  body('imprint', 'This field is required').trim().isLength({ min: 1 }),
+  body('due', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
 
-// Display book instance delete form on GET
+  // Sanitize fields
+  body('book').escape(),
+  body('imprint').escape(),
+  body('status').trim().escape(),
+  body('due').toDate(),
+
+  // Process request after validation and sanitization
+  (req, res, next) => {
+
+    // Extract validation errors from request
+    const errors = validationResult(req);
+
+    // Create a book instance with trimmed and escaped data
+    const bookInstance = new BookInstance({
+      book: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      due: req.body.due
+    });
+
+    if (!errors.isEmpty()) {
+
+      // There are errors, so render form again with
+      // sanitized values & error messages
+      Book.find({}, 'title').exec((err, data) => {
+        if (err) return next(err);
+        res.render('bookInstanceForm', {
+          title: 'Add a book copy',
+          list: data,
+          errors: errors.array(),
+          bookInstance: bookInstance
+        });
+      });
+      return;
+    } else {
+      // Form data is valid, save book instance
+      bookInstance.save(err => {
+        if (err) return next(err);
+
+        // Book instance saved, redirect to its page
+        res.redirect(bookInstance.url);
+      });
+      
+    }
+  }
+];
+
+/*
+ * Display book instance delete form on GET
+ */
 exports.deleteGet = (req, res) => {
   res.send('TODO: Book instance delete GET');
 };
 
-// Handle book instance delete on POST
+/*
+ * Handle book instance delete on POST
+ */
 exports.deletePost = (req, res) => {
   res.send('TODO: Book instance delete POST');
 };
 
-// Display book instance update form on GET
+/*
+ * Display book instance update form on GET
+ */
 exports.updateGet = (req, res) => {
   res.send('TODO: Book instance update GET');
 };
 
-// Handle book instance update on POST
+/*
+ * Handle book instance update on POST
+ */
 exports.updatePost = (req, res) => {
   res.send('TODO: Book instance update POST');
 };

@@ -1,0 +1,57 @@
+extends layout
+
+block content
+  h1.heading= title
+
+  form(method='POST' action='').form
+    label(for='firstName').form-label First name:
+    input(
+      type='text'
+      placeholder='First name'
+      name='firstName'
+      value=(author === undefined ? '' : author.firstName)
+      required='true'
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'firstName'
+          blockquote.error-message= error.msg
+
+    label(for='lastName').form-label Last name:
+    input(
+      type='text'
+      placeholder='Last name'
+      name='lastName'
+      value=(author === undefined ? '' : author.lastName)
+      required='true'
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'lastName'
+          blockquote.error-message= error.msg
+
+    label(for='dateOfBirth').form-label Date of birth:
+    input(
+      type='date'
+      placeholder='dd/mm/yyyy'
+      name='dateOfBirth'
+      value=(author === undefined ? '' : author.dateOfBirth)
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'dateOfBirth'
+          blockquote.error-message= error.msg
+
+    label(for='dateOfDeath').form-label Date of death:
+    input(
+      type='date'
+      placeholder='dd/mm/yyyy'
+      name='dateOfDeath'
+      value=(author === undefined ? '' : author.dateofDeath)
+    ).form-field
+    if errors
+      for error in errors
+        if error.param === 'dateOfDeath'
+          blockquote.error-message = error.msg
+
+    button(type='submit').button Submit

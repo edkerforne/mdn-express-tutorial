@@ -9,7 +9,10 @@ const bookInstanceSchema = new Schema({
     ref: 'Book',
     required: true
   },
-  imprint: {},
+  imprint: {
+    type: String,
+    required: true
+  },
   status: {
     type: String,
     required: true,
