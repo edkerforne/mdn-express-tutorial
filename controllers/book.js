@@ -76,7 +76,7 @@ exports.createPost = [
   // Convert genres to an array
   (req, res, next) => {
     if (!(req.body.genre instanceof Array)) {
-      if (typeof req.body.genre === 'undefined') {
+      if (typeof req.body.genre === undefined) {
         req.body.genre = [];
       } else {
         req.body.genre = new Array(req.body.genre);
@@ -167,13 +167,129 @@ exports.deletePost = (req, res) => {
 /*
  * Display book update form on GET
  */
-exports.updateGet = (req, res) => {
-  res.send('TODO: Book update GET');
+exports.updateGet = (req, res, next) => {
+
+  // Get book, authors and genres for form
+  async.parallel({
+    book: callback => {
+      Book.findById(req.params.id)
+        .populate('author').populate('genres')
+        .exec(callback);
+    },
+    authors: callback => {
+      Author.find(callback);
+    },
+    genres: callback => {
+      Genre.find(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data.book) {
+      // No results
+      const err = new Error('Book not found');
+      err.status = 404;
+      return next(err);
+    }
+
+    // Success, so mark selected genres as checked
+    for (let i = 0; i < data.genres.length; i++) {
+      for (let j = 0; j < data.book.genre.length; j++) {
+        if (data.genres[i]._id.toString() === data.book.genre[j]._id.toString()) {
+          data.genres[i].checked = 'true';
+        }
+      }
+    }
+    res.render('bookForm', {
+      title: 'Update a book',
+      authors: data.authors,
+      genres: data.genres,
+      book: data.book
+    });
+  });
 };
 
 /*
  * Handle book update on POST
  */
-exports.updatePost = (req, res) => {
-  res.send('TODO: Book update POST');
-};
+exports.updatePost = [
+
+  // Convert genre to an array
+  (req, res, next) => {
+    if (!(req.body.genre instanceof Array)) {
+      if (typeof req.body.genre === 'undefined') {
+        req.body.genre = [];
+      } else {
+        req.body.genre = new Array(req.body.genre);
+      }
+    }
+    next();
+  },
+
+  // Validate fields
+  body('title', 'Must be longer than 3 characters').trim().isLength({ min: 3 }),
+  body('author', 'This field is required').trim().isLength({ min: 1 }),
+  body('summary', 'This field is required').trim().isLength({ min: 1 }),
+  body('isbn', 'This field is required').trim().isLength({ min: 1 }),
+
+  // Sanitize fields
+  body('*').escape(),
+  body('genre.*').escape(),
+
+  // Process request after validation and sanitization
+  (req, res, next) => {
+
+    // Extract validation errors from the request
+    const errors = validationResult(req);
+
+    // Create book object with escaped and trimmed data
+    // and the old ID
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: (typeof req.body.genre === 'undefined') ? [] : req.body.genre,
+      _id: req.params.id
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors, so render the form again with
+      // sanitized values & error messages
+
+      // Get all authors and genres for form
+      async.parallel({
+        authors: callback => {
+          Author.find(callback);
+        },
+        genres: callback => {
+          Genre.find(callback);
+        }
+      }, (err, data) => {
+        if (err) return next(err);
+
+        // Mark selected genres as checked
+        for (let i = 0; i < data.genres.length; i++) {
+          if (book.genre.indexOf(data.genres[i]._id > -1)) {
+            data.genres[i].checked = 'true';
+          }
+        }
+        res.render('bookForm', {
+          title: 'Update a book',
+          authors: data.authors,
+          genres: data.genres,
+          book: book,
+          errors: errors.array()
+        });
+      });
+      return;
+    } else {
+      // Form data is valid, update book
+      // and redirect to its page
+      Book.findByIdAndUpdate(req.params.id, book, {}, err => {
+        if (err) return next(err);
+        console.log('DEBUG: ' + typeof req.body.genre);
+        res.redirect(book.url);
+      });
+    }
+  }
+];

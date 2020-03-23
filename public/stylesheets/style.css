@@ -53,7 +53,6 @@ a:hover {
 
 .text-danger {
   color: var(--color-danger);
-  font-size: 0.75rem;
 }
 
 dd {
@@ -149,12 +148,13 @@ dd {
 .form-field {
   border: 1px solid #bebebe;
   border-radius: 0.5rem;
+  line-height: 1.5;
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
 }
 
 textarea {
-  resize: vertical;
+  font: normal 1rem 'Roboto', sans-serif;
 }
 
 .button {
