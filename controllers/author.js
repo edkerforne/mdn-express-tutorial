@@ -114,25 +114,78 @@ exports.createPost = [
     }
   }
 ];
+
 /*
  *  Display author delete form on GET
  */
-exports.deleteGet = (req, res) => {
-  res.send('TODO: Author delete GET');
+exports.deleteGet = (req, res, next) => {
+  async.parallel({
+    author: callback => {
+      Author.findById(req.params.id).exec(callback);
+    },
+    books: callback => {
+      Book.find({ 'author': req.params.id }).exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data.author) res.redirect('/authors'); // No results
+    res.render('authorDelete', {
+      title: 'Delete author',
+      author: data.author,
+      books: data.books
+    });
+  });
 };
 
 /*
  * Handle author delete on POST
  */
-exports.deletePost = (req, res) => {
-  res.send('TODO: Author delete POST');
+exports.deletePost = (req, res, next) => {
+  async.parallel({
+    author: callback => {
+      Author.findById(req.body.id).exec(callback);
+    },
+    books: callback => {
+      Book.find({ 'author': req.body.id }).exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+
+    if (data.books.length < 0) {
+      // Author has books, so render form again just like GET route
+      res.render('authorDelete', {
+        title: 'Delete author',
+        author: data.author,
+        books: data.books
+      });
+      return;
+    } else {
+      // Author has no books, so delete and redirect to author list
+      Author.findByIdAndRemove(req.body.id, err => {
+        if (err) return next(err);
+        res.redirect('/authors');
+      });
+    }
+  });
 };
 
 /*
  * Display author update form on GET
  */
-exports.updateGet = (req, res) => {
-  res.send('TODO: Author update GET');
+exports.updateGet = (req, res, next) => {
+  Author.findById(req.params.id, (err, data) => {
+    if (err) return next(err);
+    if (!data) {
+      // No results
+      const err = new Error('Author not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('authorForm', {
+      title: 'Update an author',
+      author: data
+    });
+  });
 };
 
 /*

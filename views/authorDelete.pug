@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h1.heading #{title}: #{author.fullname}
+  p.text-muted= author.lifespan
+
+  if books.length
+    p
+      | The following books must be deleted
+      | before this author can be deleted:
+
+    ul
+      each book in books
+        li: a(href=book.url)= book.title
+  else
+    p Do you really want to delete this author?
+
+    form(method='POST' action='').form
+      input(
+        type='hidden'
+        name='id'
+        required='true'
+        value=author._id
+      )
+
+      button(type='submit').button.maintenance Delete
