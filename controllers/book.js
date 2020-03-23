@@ -153,15 +153,55 @@ exports.createPost = [
 /*
  * Display book delete form on GET
  */
-exports.deleteGet = (req, res) => {
-  res.send('TODO: Book delete GET');
+exports.deleteGet = (req, res, next) => {
+  async.parallel({
+    book: callback => {
+      Book.findById(req.params.id).populate('author').exec(callback);
+    },
+    bookInstances: callback => {
+      BookInstance.find({ 'book': req.params.id }).exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data.book) res.redirect('/books'); // No results
+    res.render('bookDelete', {
+      title: 'Delete book',
+      book: data.book,
+      bookInstances: data.bookInstances
+    });
+  });
 };
 
 /*
  * Handle book delete on POST
  */
-exports.deletePost = (req, res) => {
-  res.send('TODO: Book delete POST');
+exports.deletePost = (req, res, next) => {
+  async.parallel({
+    book: callback => {
+      Book.findById(req.body.id).exec(callback);
+    },
+    bookInstances: callback => {
+      BookInstance.find({ 'book': req.body.id }).exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+
+    if (data.bookInstances.length < 0) {
+      // Book has instances, so render form again just like GET route
+      res.render('bookDelete', {
+        title: 'Delete book',
+        book: data.book,
+        bookInstances: data.bookInstances
+      });
+      return;
+    } else {
+      // Book has no instances, so delete and redirect to book list
+      Book.findByIdAndRemove(req.body.id, err => {
+        if (err) return next(err);
+        res.redirect('/books');
+      });
+    }
+  });
 };
 
 /*
@@ -287,7 +327,6 @@ exports.updatePost = [
       // and redirect to its page
       Book.findByIdAndUpdate(req.params.id, book, {}, err => {
         if (err) return next(err);
-        console.log('DEBUG: ' + typeof req.body.genre);
         res.redirect(book.url);
       });
     }
