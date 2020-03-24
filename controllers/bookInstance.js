@@ -104,15 +104,26 @@ exports.createPost = [
 /*
  * Display book instance delete form on GET
  */
-exports.deleteGet = (req, res) => {
-  res.send('TODO: Book instance delete GET');
+exports.deleteGet = (req, res, next) => {
+  BookInstance.findById(req.params.id)
+    .populate('book').exec((err, data) => {
+      if (err) return next(err);
+      if (!data) res.redirect('/copies'); // No results
+      res.render('bookInstanceDelete', {
+        title: 'Delete copy',
+        bookInstance: data
+      });
+  });
 };
 
 /*
  * Handle book instance delete on POST
  */
-exports.deletePost = (req, res) => {
-  res.send('TODO: Book instance delete POST');
+exports.deletePost = (req, res, ext) => {
+  BookInstance.findByIdAndRemove(req.body.id, err => {
+    if (err) return next(err);
+    res.redirect('/copies');
+  });
 };
 
 /*
