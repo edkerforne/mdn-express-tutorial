@@ -103,15 +103,55 @@ exports.createPost = [
 /*
  * Display genre delete form on GET
  */
-exports.deleteGet = (req, res) => {
-  res.send('TODO: Genre delete GET');
+exports.deleteGet = (req, res, next) => {
+  async.parallel({
+    genre: callback => {
+      Genre.findById(req.params.id).exec(callback);
+    },
+    books: callback => {
+      Book.find({ 'genre': req.params.id }).exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data.genre) res.redirect('/genres'); // No results
+    res.render('genreDelete', {
+      title: 'Delete genre',
+      genre: data.genre,
+      books: data.books
+    });
+  });
 };
 
 /*
  * Handle genre delete on POST
  */
-exports.deletePost = (req, res) => {
-  res.send('TODO: Genre delete POST');
+exports.deletePost = (req, res, next) => {
+  async.parallel({
+    genre: callback => {
+      Genre.findById(req.body.id).exec(callback);
+    },
+    books: callback => {
+      Book.find({ 'genre': req.body.id }).exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+
+    if (data.books.length < 0) {
+      // Genre has books, so render form again just like GET route
+      res.render('genreDelete', {
+        title: 'Delete genre',
+        genre: data.genre,
+        books: data.books
+      });
+      return;
+    } else {
+      // Genre has no books, so delete and redirect to author list
+      Genre.findByIdAndRemove(req.body.id, err => {
+        if (err) return next(err);
+        res.redirect('/genres');
+      });
+    }
+  });
 };
 
 /*
