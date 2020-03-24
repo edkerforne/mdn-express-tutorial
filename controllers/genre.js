@@ -117,13 +117,78 @@ exports.deletePost = (req, res) => {
 /*
  * Display genre update form on GET
  */
-exports.updateGet = (req, res) => {
-  res.send('TODO: Genre update GET');
+exports.updateGet = (req, res, next) => {
+  Genre.findById(req.params.id, (err, data) => {
+    if (err) return next(err);
+    if (!data) {
+      // No results
+      const err = new Error('Genre not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('genreForm', {
+      title: 'Update a genre',
+      genre: data
+    });
+  });
 };
 
 /*
  * Handle genre update on POST
  */
-exports.updatePost = (req, res) => {
-  res.send('TODO: Genre update POST');
-};
+exports.updatePost = [
+
+  // Validate that the name has between 3 and 100 characters
+  body('name')
+    .isLength({ min: 3 }).trim().withMessage('Must be at least 3 characters long')
+    .isLength({ max: 100 }).withMessage('Must be shorter than 100 characters'),
+  
+  // Sanitize the name field
+  body('name').escape(),
+
+  // Process request after validation and sanitization
+  (req, res, next) => {
+    
+    // Extract validation errors from the request
+    const errors = validationResult(req);
+
+    // Create a genre object with sanitized data
+    // and the old ID
+    const genre = new Genre({
+      name: req.body.name,
+      _id: req.params.id
+    });
+
+    if (!errors.isEmpty()) {
+      
+      // There are errors, so render the form again with
+      // sanitized values & error messages
+      res.render('genreForm', {
+        title: 'Update a genre',
+        genre: genre,
+        errors: errors.array()
+      });
+    } else {
+      
+      // Form data is valid, check if genre with
+      // same name already exists
+      Genre.findOne({ 'name': req.body.name })
+        .exec((err, data) => {
+          if (err) return next(err);
+          if (data) {
+            
+            // Genre exists, redirect to its page
+            res.redirect(data.url);
+          } else {
+            
+            // Form date is valid, update genre
+            // and redirect to its page
+            Genre.findByIdAndUpdate(req.params.id, genre, {}, err => {
+              if (err) return next(err);
+              res.redirect(genre.url);
+            });
+          }
+        });
+    }
+  }
+];
