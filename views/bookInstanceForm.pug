@@ -44,6 +44,7 @@ block content
       placeholder='dd/mm/yyyy'
       name='due'
       required='true'
+      value=(bookInstance === undefined ? '' : bookInstance.due.toISOString().substring(0,10))
     ).form-field
     if errors
       for error in errors

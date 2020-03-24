@@ -6,7 +6,7 @@ block content
   p.text-muted by #[a(href=book.author.url) #{book.author.fullname}]
   p= book.summary
   p #[span.text-muted ISBN:] #{book.isbn}
-  if book.genre._id
+  if book.genre
     p #[span.text-muted Genre:] 
       each genre, index in book.genre
         a(href=genre.url)= genre.name
@@ -30,3 +30,8 @@ block content
 
     else
       p There are no copies of this book.
+
+  p.actions.text-muted
+    a(href=book.url+'/update') Update book
+    span &nbsp;|&nbsp;
+    a(href=book.url+'/delete').text-danger Delete book

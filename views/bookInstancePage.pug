@@ -17,3 +17,8 @@ block content
         span.status.maintenance #{bookInstance.status}
   if bookInstance.status !== 'Available'
     p #[span.text-muted Due:] #{bookInstance.dueFormatted}
+
+  p.actions.text-muted
+    a(href=bookInstance.url+'/update') Update copy
+    span &nbsp;|&nbsp;
+    a(href=bookInstance.url+'/delete').text-danger Delete copy

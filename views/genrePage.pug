@@ -10,3 +10,8 @@ block content
 
     else
       p No books match this genre.
+
+  p.actions.text-muted
+    a(href=genre.url+'/update') Update genre
+    span &nbsp;|&nbsp;
+    a(href=genre.url+'/delete').text-danger Delete genre

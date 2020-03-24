@@ -9,7 +9,11 @@ block content
       type='text'
       placeholder='First name'
       name='firstName'
-      value=(author === undefined ? '' : author.firstName)
+      value=(
+        author === undefined ? ''
+        : author._id ? author.name.first
+        : author.firstName
+      )
       required='true'
     ).form-field
     if errors
@@ -22,7 +26,11 @@ block content
       type='text'
       placeholder='Last name'
       name='lastName'
-      value=(author === undefined ? '' : author.lastName)
+      value=(
+        author === undefined ? ''
+        : author._id ? author.name.last
+        : author.lastName
+      )
       required='true'
     ).form-field
     if errors
@@ -35,7 +43,7 @@ block content
       type='date'
       placeholder='dd/mm/yyyy'
       name='dateOfBirth'
-      value=(author === undefined ? '' : author.dateOfBirth)
+      value=(author.dateOfBirth === undefined ? '' : author.dateOfBirth.toISOString().substring(0, 10))
     ).form-field
     if errors
       for error in errors
@@ -47,7 +55,7 @@ block content
       type='date'
       placeholder='dd/mm/yyyy'
       name='dateOfDeath'
-      value=(author === undefined ? '' : author.dateofDeath)
+      value=(author.dateOfDeath === undefined ? '' : author.dateOfDeath.toISOString().substring(0, 10))
     ).form-field
     if errors
       for error in errors
