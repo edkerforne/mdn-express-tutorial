@@ -1,5 +1,6 @@
 const BookInstance = require('../models/bookInstance');
 const Book = require('../models/book');
+const async = require('async');
 const { body, validationResult } = require('express-validator');
 
 /*
@@ -117,13 +118,87 @@ exports.deletePost = (req, res) => {
 /*
  * Display book instance update form on GET
  */
-exports.updateGet = (req, res) => {
-  res.send('TODO: Book instance update GET');
+exports.updateGet = (req, res, next) => {
+  async.parallel({
+    bookInstance: callback => {
+      BookInstance.findById(req.params.id).exec(callback);
+    },
+    list: callback => {
+      Book.find({}, 'title').exec(callback);
+    }
+  }, (err, data) => {
+    if (err) return next(err);
+    if (!data) {
+      // No results
+      const err = new Error('Book copy not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.render('bookInstanceForm', {
+      title: 'Update a book copy',
+      bookInstance: data.bookInstance,
+      list: data.list
+    });
+  });
 };
 
 /*
  * Handle book instance update on POST
  */
-exports.updatePost = (req, res) => {
-  res.send('TODO: Book instance update POST');
-};
+exports.updatePost = [
+  // Validate fields
+  body('book', 'This field is required').trim().isLength({ min: 1 }),
+  body('imprint', 'This field is required').trim().isLength({ min: 1 }),
+  body('due', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
+
+  // Sanitize fields
+  body('book').escape(),
+  body('imprint').escape(),
+  body('status').trim().escape(),
+  body('due').toDate(),
+
+  // Process request after validation and sanitization
+  (req, res, next) => {
+
+    // Extract validation errors from request
+    const errors = validationResult(req);
+
+    // Create a book instance with trimmed and escaped data
+    // and the old ID
+    const bookInstance = new BookInstance({
+      book: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      due: req.body.due,
+      _id: req.params.id
+    });
+
+    if (!errors.isEmpty()) {
+
+      // There are errors, so render form again with
+      // sanitized values & error messages
+      Book.find({}, 'title').exec((err, data) => {
+        if (err) return next(err);
+        res.render('bookInstanceForm', {
+          title: 'Update a book copy',
+          list: data,
+          errors: errors.array(),
+          bookInstance: bookInstance
+        });
+      });
+      return;
+    } else {
+
+      // Form data is valid, update genre
+      // and redirect to its page
+      BookInstance.findByIdAndUpdate(
+        req.params.id,
+        bookInstance,
+        {},
+        err => {
+          if (err) return next(err);
+          res.redirect(bookInstance.url);
+      });
+    }
+  }
+];
